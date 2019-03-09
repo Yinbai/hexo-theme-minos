@@ -1,5 +1,5 @@
 <% if (!head && !(has_config('plugins.clipboard') && get_config('plugins.clipboard') === false)) { %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="//cdn.bootcss.com/clipboard.js/2.0.4/clipboard.min.js"></script>
     <style>
         .hljs {
             position: relative;
@@ -10,6 +10,8 @@
             color: #9a9a9a;
             background: none;
             border: none;
+            outline: none;
+            cursor: pointer;
         }
 
         .hljs > .clipboard-btn {
@@ -37,10 +39,14 @@
           copyButton.addClass('clipboard-btn');
           copyButton.attr('data-clipboard-target-id', codeId);
 
+          copyButton.on('blur', function() {
+            copyButton.html('Copy <i class="far fa-clipboard"></i>');
+          });
+
           var figcaption = figure.querySelector('figcaption');
 
           if (figcaption) {
-            figcaption.append(copyButton[0]);
+            figcaption.prepend(copyButton[0]);
           } else {
             figure.prepend(copyButton[0]);
           }
@@ -50,6 +56,12 @@
           target: function(trigger) {
             return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
           }
+        });
+
+        clipboard.on('success', function(e) {
+            $(e.trigger).text('Copied!');
+
+            e.clearSelection();
         });
       })
     </script>
